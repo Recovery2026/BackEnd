@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "OAUTH2_PROVIDERS")
+@Table(name = "oauth2_providers")
 public class Oauth2Provider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,5 +17,5 @@ public class Oauth2Provider {
     @ColumnDefault("true")
     @Column(name = "activation", nullable = false)
     private Boolean activation;
-    
+
 }

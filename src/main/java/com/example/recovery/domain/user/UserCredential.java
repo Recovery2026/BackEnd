@@ -8,7 +8,7 @@ import org.hibernate.annotations.NotFoundAction;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "USER_CREDENTIALS")
+@Table(name = "user_credentials")
 public class UserCredential {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class UserCredential {
     @NotFound(action = NotFoundAction.EXCEPTION)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = true, updatable = true, nullable = false)
-    private User user;
+    private Users users;
 
     @Column(name = "email", nullable = false, length = Integer.MAX_VALUE)
     private String email;

@@ -6,8 +6,8 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "USER")
-public class User {
+@Table(name = "users")
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)

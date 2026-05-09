@@ -1,19 +1,22 @@
 package com.example.recovery.domain.memoirs;
 
-import com.example.recovery.domain.user.User;
+import com.example.recovery.domain.user.Users;
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.type.SqlTypes;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "MEMOIRS")
-public class Memoir {
+@Table(name = "memoirs")
+public class Memoirs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "memoir_id", nullable = false)
@@ -22,7 +25,7 @@ public class Memoir {
     @NotFound(action = NotFoundAction.EXCEPTION)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = true, updatable = true, nullable = false)
-    private User user;
+    private Users users;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "memoir")
@@ -36,8 +39,7 @@ public class Memoir {
     @Column(name = "feedback")
     private Map<String, Object> feedback;
 
-    @ColumnDefault("now()")
     @Column(name = "date", nullable = false)
-    private OffsetDateTime date;
-    
+    private LocalDate date;
+
 }
