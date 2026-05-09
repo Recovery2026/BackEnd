@@ -30,7 +30,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: 4️⃣ Gradlew build
-        run: DB_HOST_DEVELOP=${{secrets.DB_HOST_DEVELOP}} DB_PASSWORD_DEVELOP=${{secrets.DB_PASSWORD_DEVELOP}} DB_USERNAME_DEVELOP=${{secrets.DB_USERNAME_DEVELOP}} ./gradlew clean build
+        run: ./gradlew clean build
 
       - name: 5️⃣ Get current time
         uses: josStorer/get-current-time@v2.1.2
