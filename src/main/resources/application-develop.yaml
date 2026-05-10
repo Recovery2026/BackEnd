@@ -3,9 +3,9 @@ spring:
     name: "recovery"
   datasource:
     driver-class-name: "org.postgresql.Driver"
-    url: ${DB_HOST_DEVELOP}
-    username: ${DB_USERNAME_DEVELOP}
-    password: ${DB_PASSWORD_DEVELOP}
+    url: ${DB_HOST}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     database: POSTGRESQL
     generate-ddl: false
