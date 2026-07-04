@@ -5,10 +5,9 @@ import com.example.recovery.domain.memoirs.Memoirs;
 import com.example.recovery.domain.user.Users;
 import com.example.recovery.maker.MemoirsMaker;
 import com.example.recovery.maker.UsersMaker;
-import com.example.recovery.request.MemoirBodyRequest;
 import com.example.recovery.request.SimplePageRequest;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -57,12 +56,10 @@ class MemoirRepositoryImplTest {
         entityManager.flush();
         entityManager.clear();
 
-        MemoirBodyRequest request = new MemoirBodyRequest();
         SimplePageRequest simplePageRequest = new SimplePageRequest();
-        request.setUserId(userAId);
 
         // when
-        List<Memoirs> result = memoirRepository.getMemoirsByRequest(request, simplePageRequest);
+        List<Memoirs> result = memoirRepository.getMemoirsByRequest(userAId, simplePageRequest);
 
         // then
         assertEquals(2, result.size());
@@ -92,12 +89,10 @@ class MemoirRepositoryImplTest {
         entityManager.flush();
         entityManager.clear();
 
-        MemoirBodyRequest request = new MemoirBodyRequest();
         SimplePageRequest simplePageRequest = new SimplePageRequest();
-        request.setUserId(999L);
 
         // when
-        List<Memoirs> result = memoirRepository.getMemoirsByRequest(request, simplePageRequest);
+        List<Memoirs> result = memoirRepository.getMemoirsByRequest(999L, simplePageRequest);
 
         // then
         assertTrue(result.isEmpty());

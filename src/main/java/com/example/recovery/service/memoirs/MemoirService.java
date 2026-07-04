@@ -8,10 +8,14 @@ import com.example.recovery.domain.user.Users;
 import com.example.recovery.dto.MemoirSimple;
 import com.example.recovery.repository.memoirs.MemoirRepository;
 import com.example.recovery.repository.users.UsersRepository;
-import com.example.recovery.request.*;
+import com.example.recovery.request.MemoirCalenderRequest;
+import com.example.recovery.request.MemoirUpdateRequest;
+import com.example.recovery.request.MemoirWriteRequest;
+import com.example.recovery.request.SimplePageRequest;
 import com.example.recovery.response.MemoirCalenderResponse;
 import com.example.recovery.response.MemoirResponse;
 import com.example.recovery.response.MemoirSimpleResponse;
+import com.example.recovery.service.auth.AuthTokenService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,12 +28,16 @@ import java.util.List;
 @Slf4j
 public class MemoirService {
 
+    private final AuthTokenService authTokenService;
     private final MemoirRepository memoirRepository;
     private final UsersRepository usersRepository;
 
     @Transactional(readOnly = true)
-    public MemoirSimpleResponse getMemoirList(MemoirBodyRequest request, SimplePageRequest simplePageRequest) {
-        List<Memoirs> memoirs = memoirRepository.getMemoirsByRequest(request, simplePageRequest);
+    public MemoirSimpleResponse getMemoirList(SimplePageRequest simplePageRequest) {
+        Long userId = authTokenService.getCurrentUserId();
+
+        List<Memoirs> memoirs = memoirRepository.getMemoirsByRequest(userId, simplePageRequest);
+        long total = memoirRepository.countMemoirsByRequest(userId, simplePageRequest);
 
         List<MemoirSimple> memoirList = memoirs.stream()
                 .map(memoir -> MemoirSimple.builder()
@@ -39,12 +47,14 @@ public class MemoirService {
                         .build())
                 .toList();
 
-        return new MemoirSimpleResponse(memoirList, memoirs.size());
+        return new MemoirSimpleResponse(memoirList, total);
     }
 
     @Transactional(readOnly = true)
-    public MemoirCalenderResponse getMemoirCalender(MemoirBodyRequest request, MemoirCalenderRequest simplePageRequest) {
-        Memoirs memoirs = memoirRepository.findByUsersIdAndDate(request.getUserId(), simplePageRequest.getDate())
+    public MemoirCalenderResponse getMemoirCalender(MemoirCalenderRequest simplePageRequest) {
+        Long userId = authTokenService.getCurrentUserId();
+
+        Memoirs memoirs = memoirRepository.findByUsersIdAndDate(userId, simplePageRequest.getDate())
                 .orElseThrow(() -> new MemoirNotFoundException("해당 날짜의 회고가 없습니다."));
 
         return new MemoirCalenderResponse(
@@ -55,8 +65,10 @@ public class MemoirService {
     }
 
     @Transactional(readOnly = true)
-    public MemoirResponse getMemoir(MemoirBodyRequest request, Long memoirId) {
-        Memoirs memoirs = memoirRepository.findByIdAndUsersId(memoirId, request.getUserId())
+    public MemoirResponse getMemoir(Long memoirId) {
+        Long userId = authTokenService.getCurrentUserId();
+
+        Memoirs memoirs = memoirRepository.findByIdAndUsersId(memoirId, userId)
                 .orElseThrow(() -> new MemoirNotFoundException("해당 회고가 없습니다."));
 
         return MemoirResponse.builder()
@@ -68,7 +80,9 @@ public class MemoirService {
 
     @Transactional
     public void updateMemoir(MemoirUpdateRequest request, Long memoirId) {
-        Memoirs memoirs = memoirRepository.findByIdAndUsersId(memoirId, request.getUserId())
+        Long userId = authTokenService.getCurrentUserId();
+
+        Memoirs memoirs = memoirRepository.findByIdAndUsersId(memoirId, userId)
                 .orElseThrow(() -> new MemoirNotFoundException("해당 회고가 없습니다."));
 
         memoirs.setMemoir(request.getData());
@@ -76,10 +90,12 @@ public class MemoirService {
 
     @Transactional
     public void writeMemoir(MemoirWriteRequest request) {
-        Users users = usersRepository.findById(request.getUserId())
+        Long userId = authTokenService.getCurrentUserId();
+
+        Users users = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersNotFoundException("해당 사용자가 없습니다."));
 
-        if (memoirRepository.findByUsersIdAndDate(request.getUserId(), request.getDate()).isPresent()) {
+        if (memoirRepository.findByUsersIdAndDate(userId, request.getDate()).isPresent()) {
             throw new MemoirAlreadyExistException("해당 날짜의 회고가 이미 존재합니다.");
         }
 
@@ -97,7 +113,9 @@ public class MemoirService {
 
     @Transactional
     public void updateImprovement(MemoirUpdateRequest request, Long memoirId) {
-        Memoirs memoirs = memoirRepository.findByIdAndUsersId(memoirId, request.getUserId())
+        Long userId = authTokenService.getCurrentUserId();
+
+        Memoirs memoirs = memoirRepository.findByIdAndUsersId(memoirId, userId)
                 .orElseThrow(() -> new MemoirNotFoundException("해당 회고가 없습니다."));
 
         memoirs.setImprovement(request.getData());

@@ -1,12 +1,17 @@
 package com.example.recovery.domain.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.time.OffsetDateTime;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user_credentials")
 public class UserCredential {
@@ -26,6 +31,7 @@ public class UserCredential {
     @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
     private String password;
 
+    @CreationTimestamp
     @ColumnDefault("now()")
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
