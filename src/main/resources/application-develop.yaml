@@ -28,10 +28,6 @@ spring:
       password: ${REDIS_PASSWORD}
       ssl:
         enabled: false
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
 #  mail:
 #    host: smtp.gmail.com
 #    port: 587
@@ -51,6 +47,10 @@ app:
     secret: ${JWT_SECRET}
     access-token-seconds: ${JWT_ACCESS_TOKEN_SECONDS:900}
     refresh-token-seconds: ${JWT_REFRESH_TOKEN_SECONDS:1209600}
+  supabase:
+    url: ${SUPABASE_URL}
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
+    profile-bucket: ${SUPABASE_PROFILE_BUCKET:profileImage}
 
 server:
   port: 8080

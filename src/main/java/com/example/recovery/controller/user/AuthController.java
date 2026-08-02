@@ -6,7 +6,7 @@ import com.example.recovery.request.auth.SignupRequest;
 import com.example.recovery.response.auth.MeResponse;
 import com.example.recovery.response.auth.TokenResponse;
 import com.example.recovery.service.auth.AuthTokenService;
-import com.example.recovery.service.auth.UsersService;
+import com.example.recovery.service.user.UsersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;

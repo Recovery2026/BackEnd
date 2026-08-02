@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 
@@ -31,7 +31,7 @@ public class UserCredential {
     @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
     private String password;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @ColumnDefault("now()")
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;

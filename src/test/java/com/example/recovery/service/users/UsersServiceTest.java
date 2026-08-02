@@ -1,11 +1,15 @@
-package com.example.recovery.service.auth;
+package com.example.recovery.service.users;
 
 import com.example.recovery.common.exception.EmailAlreadyExistException;
 import com.example.recovery.domain.user.UserCredential;
 import com.example.recovery.domain.user.Users;
 import com.example.recovery.repository.users.UserCredentialRepository;
 import com.example.recovery.repository.users.UsersRepository;
+import com.example.recovery.request.UserPasswordUpdateRequest;
+import com.example.recovery.request.UserUpdateRequest;
 import com.example.recovery.request.auth.SignupRequest;
+import com.example.recovery.service.auth.AuthTokenService;
+import com.example.recovery.service.user.UsersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +39,9 @@ class UsersServiceTest {
 
     @Mock
     private UsersRepository usersRepository;
+
+    @Mock
+    private AuthTokenService authTokenService;
 
     @InjectMocks
     private UsersService usersService;
@@ -157,7 +164,7 @@ class UsersServiceTest {
     }
 
     @Test
-    @DisplayName("성공: Users와 UserCredential 연결된다")
+    @DisplayName("성공: Users와 UserCredential 연결")
     void signup_success_user_credential_relationship() {
         // given
         when(userCredentialRepository.findByEmail(anyString()))
@@ -180,6 +187,55 @@ class UsersServiceTest {
 
         assertNotNull(savedCredential.getUsers());
         assertEquals(savedUser, savedCredential.getUsers());
+    }
+
+    @Test
+    @DisplayName("성공: 사용자 닉네임 수정")
+    void updateUser_success() {
+        // given
+        UserUpdateRequest request = new UserUpdateRequest();
+        request.setPassword("password123");
+        request.setNickname("newNickname");
+
+        Users users = new Users();
+        users.setNickname("oldNickname");
+
+        UserCredential credential = new UserCredential();
+        credential.setUsers(users);
+        credential.setPassword("encoded_old_password");
+
+        when(authTokenService.getCurrentUserId()).thenReturn(1L);
+        when(userCredentialRepository.findByUsersId(1L)).thenReturn(Optional.of(credential));
+        when(passwordEncoder.matches("password123", "encoded_old_password")).thenReturn(true);
+
+        // when
+        usersService.updateUser(request);
+
+        // then
+        assertEquals("newNickname", users.getNickname());
+    }
+
+    @Test
+    @DisplayName("성공: 비밀번호 변경")
+    void updatePassword_success() {
+        // given
+        UserPasswordUpdateRequest request = new UserPasswordUpdateRequest();
+        request.setCurrentPassword("oldPassword");
+        request.setNewPassword("newPassword");
+
+        UserCredential credential = new UserCredential();
+        credential.setPassword("encoded_old_password");
+
+        when(authTokenService.getCurrentUserId()).thenReturn(1L);
+        when(userCredentialRepository.findByUsersId(1L)).thenReturn(Optional.of(credential));
+        when(passwordEncoder.matches("oldPassword", "encoded_old_password")).thenReturn(true);
+        when(passwordEncoder.encode("newPassword")).thenReturn("encoded_new_password");
+
+        // when
+        usersService.updatePassword(request);
+
+        // then
+        assertEquals("encoded_new_password", credential.getPassword());
     }
 }
 
